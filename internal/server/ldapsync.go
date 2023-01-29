@@ -218,5 +218,11 @@ func (s *Server) updateLdapUsers(ldapUsers []ldap.RawLdapData, ldapGroups []ldap
 				continue
 			}
 		}
+
+		// Check if user already has a peer setup, if not create one
+		if err := s.CreateUserDefaultPeer(user.Email, s.wg.Cfg.GetDefaultDeviceName()); err != nil {
+			// Not a fatal error, just log it...
+			logrus.Errorf("failed to automatically create vpn peer for %s: %v", user.Email, err)
+		}
 	}
 }
